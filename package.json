@@ -2,7 +2,7 @@
   "name": "queue-light",
   "version": "1.0.0",
   "description": "Lighweight file based JSON queuing service",
-  "main": "index.js",
+  "main": "queue-light.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

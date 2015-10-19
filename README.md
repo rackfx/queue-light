@@ -56,16 +56,16 @@ Initialize JSON queue file.
 
 #### queue.push(data,cb)
 
-Push new data into the queue.  Returns the entire queue.
+Push new data into the queue, and mark it "in queue" (0).  Returns the entire queue.
 
 #### queue.pull(cb)
 
-Pull the oldest item out of the queue and mark it as in progress
+Pull the oldest item out of the queue and mark it as "in progress" (1)
 
 #### queue.finish(item,cb)
 
-Remove item from queue.  If finishedFilename is set, the item will be added to the finished items JSON file
+Remove item from queue.  If finishedFilename is set, the item will be added to the finished items JSON file and marked "Completed" (2)
 
 #### queue.return(item,cb)
 
-Return an item back to the queue, marking it "in queue"
+Return an item back to the queue, marking it "in queue" (0)

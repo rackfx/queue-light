@@ -50,20 +50,26 @@ var extend = {
   pull: function(cb){ // pull's next data message and marks it in progress
     var filename = this.filename;
     jsonfile.readFile(filename, function(err, obj) {
-      var items = _.filter(obj, {'status':0});
-      var sorted = _.sortBy(items, 'insertTime');
+      if(obj.length===0){
+        cb(null, null);
+      }
+      else{
+        var items = _.filter(obj, {'status':0});
+        var sorted = _.sortBy(items, 'insertTime');
 
-      sorted[0].status = 1;
-      sorted[0].pullTime = moment().format();
+        sorted[0].status = 1;
+        sorted[0].pullTime = moment().format();
 
-      jsonfile.writeFile(filename, sorted,function(err){
-          if(err){
-            cb(err);
-          }
-          else {
-            cb(null, sorted[0]);
-          }
-      });
+        jsonfile.writeFile(filename, sorted,function(err){
+            if(err){
+              cb(err);
+            }
+            else {
+              cb(null, sorted[0]);
+            }
+        });
+      }
+
     })
   },
   finish: function(item,cb){ // Removes the data message from the queue
@@ -137,5 +143,6 @@ var extend = {
       }
 
     })
-  }
+  },
+
 }

@@ -8,14 +8,14 @@ var queue = queuelight.init(
 );
 
 
-var data = {name: 'first'}
-queue.push(data, function(err,data){
+// var data = {name: 'first'}
+// queue.push(data, function(err,data){
     queue.pull(function(err,item){
-      queue.finish(item, function(err, i){
-
-      });
+      // queue.finish(item, function(err, i){
+      //
+      // });
     });
-});
+// });
 
 // queue.return();
 // queue.pull();

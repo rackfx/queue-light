@@ -7,7 +7,7 @@ Lighweight file based JSON queuing service.
 
 ```
 // Bring in the module
-var queuelight = require('./queue-light.js');
+var queuelight = require('queue-light');
 
 // Initialize the queue object.
 var queue = queuelight.init(

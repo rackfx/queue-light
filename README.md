@@ -37,6 +37,10 @@ queue.finish(item, function(err, item){
 
 ```
 
+### Data Flow
+
+![](https://github.com/rackfx/queue-light/blob/master/queue-light-flow.png?raw=true)
+
 ### API
 
 #### .init(options)

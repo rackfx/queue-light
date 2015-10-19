@@ -16,7 +16,7 @@
     "file",
     "json"
   ],
-  "author": "David Jones <drj@rackfx.com> (http://rackfx.com)",
+  "author": "David Jones <null@rackfx.com> (http://rackfx.com)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/rackfx/queue-light/issues"

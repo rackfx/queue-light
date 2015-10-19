@@ -24,6 +24,8 @@
   "homepage": "https://github.com/rackfx/queue-light",
   "dependencies": {
     "jsonfile": "^2.2.3",
-    "lodash": "^3.10.1"
+    "lodash": "^3.10.1",
+    "moment": "^2.10.6",
+    "node-uuid": "^1.4.3"
   }
 }

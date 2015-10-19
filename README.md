@@ -3,7 +3,9 @@ Lighweight file based JSON queuing service.
 
 ### Usage:
 
-```bash npm install queue-light ```
+```bash
+npm install queue-light
+```
 
 ```javascript
 // Bring in the module

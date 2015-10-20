@@ -16,7 +16,6 @@ var queue = ql.init(
   {
     filename: './data/queue.json',
     finishedFilename: './data/queue.finished.json',
-    queueTimeout: 0,
   }
 );
 

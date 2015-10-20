@@ -40,9 +40,6 @@ queue.finish(item, function(err, item){
 
 
 ```
-### NOTICE
-
-Currently, this module does not create the used data files.  Please create the data files you plan on using and simply put "[]" in for the contents.  TODO: Auto-create files.
 
 ### Data Flow
 

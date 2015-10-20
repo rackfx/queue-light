@@ -25,19 +25,15 @@ var data = {name: 'first'}
 // Push your data to the json file.
 queue.push(data, function(err,data){
   console.log(data);
+  // Pull oldest from the json file
+  queue.pull(function(err,item){
+    console.log(item);
+    // mark the item as finished, this removes it from the json file
+    queue.finish(item, function(err, item){
+      console.log(item);
+    });
+  });
 });
-
-// Pull oldest from the json file
-queue.pull(function(err,item){
-  console.log(item);
-});
-
-// mark the item as finished, this removes it from the json file
-queue.finish(item, function(err, item){
-  console.log(item);
-});
-
-
 ```
 
 ### Data Flow

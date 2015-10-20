@@ -9,10 +9,10 @@ npm install queue-light
 
 ```javascript
 // Bring in the module
-var queuelight = require('queue-light');
+var ql = require('queue-light');
 
 // Initialize the queue object.
-var queue = queuelight.init(
+var queue = ql.init(
   {
     filename: './data/queue.json',
     finishedFilename: './data/queue.finished.json',

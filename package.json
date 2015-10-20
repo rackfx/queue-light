@@ -1,0 +1,31 @@
+{
+  "name": "queue-light",
+  "version": "1.0.2",
+  "description": "Lighweight file based JSON queuing service",
+  "main": "queue-light.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rackfx/queue-light.git"
+  },
+  "keywords": [
+    "queue",
+    "messaging",
+    "file",
+    "json"
+  ],
+  "author": "David Jones <null@rackfx.com> (http://rackfx.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rackfx/queue-light/issues"
+  },
+  "homepage": "https://github.com/rackfx/queue-light",
+  "dependencies": {
+    "jsonfile": "^2.2.3",
+    "lodash": "^3.10.1",
+    "moment": "^2.10.6",
+    "node-uuid": "^1.4.3"
+  }
+}

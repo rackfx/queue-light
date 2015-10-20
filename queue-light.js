@@ -4,6 +4,8 @@ var _ = require('lodash');
 var moment = require('moment');
 var uuid = require('node-uuid');
 var fs = require('fs');
+var fileExists = require('file-exists');
+
 
 /* exports.init options : {
   queueTimeout : how long items can be in the queue before they're considered "stuck",
@@ -16,11 +18,14 @@ exports.init = function(options){
   result.filename = options.filename;
   if(options.finishedFilename) {
     result.finishedFilename = options.finishedFilename;
+    createNotExist(options.finishedFilename, '[]');
   }
+  createNotExist(options.filename, '[]')
+
   result.queueTimeout = options.queueTimeout;
   var fstat = fs.accessSync(options.filename);
   console.log(fstat);
-  // TODO: check files to make sure the exist, if not initialize with '[]';
+
   return result;
 }
 
@@ -145,4 +150,11 @@ var extend = {
     })
   },
 
+
+}
+
+function createNotExist(filename, data){
+  if(!fileExists(filename)){
+    fs.writeFileSync(filename, data);
+  }
 }

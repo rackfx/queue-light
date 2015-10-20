@@ -23,8 +23,8 @@ exports.init = function(options){
   createNotExist(options.filename, '[]')
 
   result.queueTimeout = options.queueTimeout;
-  var fstat = fs.accessSync(options.filename);
-  console.log(fstat);
+  
+
 
   return result;
 }

@@ -14,8 +14,8 @@ var ql = require('queue-light');
 // Initialize the queue object.
 var queue = ql.init(
   {
-    filename: './data/queue.json',
-    finishedFilename: './data/queue.finished.json',
+    filename: './queue.json',
+    finishedFilename: './queue.finished.json',
   }
 );
 

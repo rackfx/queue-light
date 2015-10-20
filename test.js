@@ -8,6 +8,7 @@ var queue = queuelight.init(
 );
 
 
+
 var data = {name: 'first'}
 queue.push(data, function(err,data){
     queue.pull(function(err,item){
@@ -16,6 +17,7 @@ queue.push(data, function(err,data){
       });
     });
 });
+
 
 // queue.return();
 // queue.pull();

@@ -1,4 +1,4 @@
-# queue-light
+# queue-light (beta)
 Lighweight file based JSON queuing service.
 
 ### Usage:
@@ -52,8 +52,8 @@ queue.finish(item, function(err, item){
 Initialize JSON queue file.
 
 ##### Options
-- **filename** - (required) The JSON file path for data store
-- **finishedFilename** - (optional) the JSON file path for finished items
+- **filename** - (required) The JSON file path for data store. If the file does not exist, it will be created.
+- **finishedFilename** - (optional) the JSON file path for finished items. If the file does not exist, it will be created.
 
 #### queue.push(data,cb)
 

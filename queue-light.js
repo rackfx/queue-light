@@ -23,8 +23,6 @@ exports.init = function(options){
   createNotExist(options.filename, '[]')
 
   result.queueTimeout = options.queueTimeout;
-  
-
 
   return result;
 }
@@ -32,15 +30,15 @@ exports.init = function(options){
 
 var extend = {
   push: function(data, cb){ // push a new data message into the queue.
-
+    var o = {}
     var filename = this.filename;
     // set defaults before insert
-    data.insertTime = moment().format();
-    data.id = uuid.v1();
-    data.status = 0; // 0 = queued, 1 = in progress, 2 = completed
-
+    o.insertTime = moment().format();
+    o.id = uuid.v1();
+    o.status = 0; // 0 = queued, 1 = in progress, 2 = completed
+    o.data = data;
     jsonfile.readFile(filename, function(err, obj) {
-      obj.push(data);
+      obj.push(o);
       jsonfile.writeFile(filename,obj,function(err){
         if(err){
           cb(err);

@@ -12,6 +12,7 @@ var queue = queuelight.init(
 var data = {name: 'first'}
 queue.push(data, function(err,data){
     queue.pull(function(err,item){
+      console.log(item);
       queue.finish(item, function(err, i){
 
       });

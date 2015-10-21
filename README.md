@@ -65,3 +65,9 @@ Remove item from queue.  If finishedFilename is set, the item will be added to t
 #### queue.return(item,cb)
 
 Return an item back to the queue, marking it "in queue" (0)
+
+### TODO:
+- move json data to data object
+- drop()
+- findOne()
+- findAll()

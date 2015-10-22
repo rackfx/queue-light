@@ -11,16 +11,20 @@ var queue = queuelight.init(
 
 var data = {name: 'first'}
 queue.push(data, function(err,data2){
-  queue.setReady(data2,function(err,data3){
-    queue.pull(function(err,item){
-      console.log(item);
-      if(item){
-        queue.finish(item, function(err, i){
+  data2.data.name = "david";
+  queue.update(data2,function(err, data22){
+    queue.setReady(data22,function(err,data3){
+      queue.pull(function(err,item){
+        console.log(item);
+        if(item){
+          queue.finish(item, function(err, i){
 
-        });
-      }
-    });
+          });
+        }
+      });
+    })
   })
+
 
 });
 

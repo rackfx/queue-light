@@ -8,22 +8,25 @@ var fileExists = require('file-exists');
 
 
 /* exports.init options : {
-  queueTimeout : how long items can be in the queue before they're considered "stuck",
+  finishedFilename: string
   filename : string
+  defaultReadyState: boolean // Default: true
 }
 */
 
 exports.init = function(options){
   var result = extend;
   result.filename = options.filename;
+  if(!('defaultReadyState' in options)){ // set default
+    options.defaultReadyState = true;
+  }
+  result.defaultReadyState = options.defaultReadyState;
   if(options.finishedFilename) {
     result.finishedFilename = options.finishedFilename;
-    createNotExist(options.finishedFilename, '[]');
+    createNotExist(options.finishedFilename, '[]'); // create the file if it doesn't exist
   }
-  createNotExist(options.filename, '[]')
-
+  createNotExist(options.filename, '[]'); // create the file if it doesn't exist
   result.queueTimeout = options.queueTimeout;
-
   return result;
 }
 
@@ -37,6 +40,7 @@ var extend = {
     o.id = uuid.v1();
     o.status = 0; // 0 = queued, 1 = in progress, 2 = completed
     o.data = data;
+    o.readyState = this.defaultReadyState;
     jsonfile.readFile(filename, function(err, obj) {
       obj.push(o);
       jsonfile.writeFile(filename,obj,function(err){
@@ -44,7 +48,7 @@ var extend = {
           cb(err);
         }
         else {
-          cb(null, obj);
+          cb(null, obj[obj.length - 1]);
         }
       })
     })
@@ -57,22 +61,78 @@ var extend = {
         cb(null, null);
       }
       else{
-        var items = _.filter(obj, {'status':0});
-        var sorted = _.sortBy(items, 'insertTime');
 
-        sorted[0].status = 1;
-        sorted[0].pullTime = moment().format();
+        if ((!obj) || (obj.length == 0)){
+          cb(null, null);
+        }
+        else {
 
-        jsonfile.writeFile(filename, sorted,function(err){
-            if(err){
-              cb(err);
-            }
-            else {
-              cb(null, sorted[0]);
-            }
-        });
+          var items = _.filter(obj, {'status':0, 'readyState': true});
+          if((!items) || (items.length ==0)){
+            cb(null,null);
+          }
+          else {
+            var sorted = _.sortBy(items, 'insertTime');
+
+            sorted[0].status = 1;
+            sorted[0].pullTime = moment().format();
+
+            jsonfile.writeFile(filename, sorted,function(err){
+                if(err){
+                  cb(err);
+                }
+                else {
+                  cb(null, sorted[0]);
+                }
+            });
+          }  // end else if for !items || items.length ==0
+
+        }
+
       }
 
+    })
+  },
+  setReady: function(item,cb){
+    var filename = this.filename;
+    var id=item.id;
+    console.log(item.id);
+    jsonfile.readFile(filename, function(err, obj) {
+
+      //TODO error check!
+      obj.forEach(function(queueItem, i){
+        if(obj[i].id == id){
+          obj[i].readyState = true;
+          jsonfile.writeFile(filename, obj,function(err){
+              if(err){
+                cb(err);
+              }
+              else {
+                cb(null, obj[i]);
+              }
+          });
+        }
+      })
+    });
+  },
+  update: function(item, cb){  // update item properties.  This will pull properties from {item} and update the existing item in the json file.
+    var filename = this.filename;
+    var id = item.id;
+    jsonfile.readFile(filename,function(err,obj){
+      //TODO: error check!
+      obj.forEach(function(queueItem, i){
+        if(obj[i].id = id){
+          obj[i].data = item.data
+          jsonfile.writeFile(filename, obj,function(err){
+              if(err){
+                cb(err);
+              }
+              else {
+                cb(null, obj[i]);
+              }
+          });
+        }
+      })
     })
   },
   finish: function(item,cb){ // Removes the data message from the queue

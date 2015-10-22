@@ -3,20 +3,25 @@ var queue = queuelight.init(
   {
     filename: './data/queue.json',
     finishedFilename: './data/queue.finished.json',
-    queueTimeout: 0,
+    defaultReadyState: false
   }
 );
 
 
 
 var data = {name: 'first'}
-queue.push(data, function(err,data){
+queue.push(data, function(err,data2){
+  queue.setReady(data2,function(err,data3){
     queue.pull(function(err,item){
       console.log(item);
-      queue.finish(item, function(err, i){
+      if(item){
+        queue.finish(item, function(err, i){
 
-      });
+        });
+      }
     });
+  })
+
 });
 
 

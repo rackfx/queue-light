@@ -4,7 +4,7 @@
   "description": "Lighweight file based JSON queuing service",
   "main": "queue-light.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -b"
   },
   "repository": {
     "type": "git",

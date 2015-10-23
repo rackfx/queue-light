@@ -6,7 +6,6 @@ var uuid = require('node-uuid');
 var fs = require('fs');
 var fileExists = require('file-exists');
 
-
 /* exports.init options : {
   finishedFilename: string
   filename : string
@@ -29,7 +28,6 @@ exports.init = function(options){
   result.queueTimeout = options.queueTimeout;
   return result;
 }
-
 
 var extend = {
   push: function(data, cb){ // push a new data message into the queue.
@@ -86,11 +84,8 @@ var extend = {
                 }
             });
           }  // end else if for !items || items.length ==0
-
         }
-
       }
-
     })
   },
   setReady: function(item,cb){
@@ -132,8 +127,8 @@ var extend = {
               }
           });
         }
-      })
-    })
+      });
+    });
   },
   finish: function(item,cb){ // Removes the data message from the queue
     var id=item.id;
@@ -144,7 +139,7 @@ var extend = {
     }
     jsonfile.readFile(filename, function(err, obj) {
       if(err){
-        cb(err)
+        cb(err);
       }
       else {
         var item = _.remove(obj, { 'id':id });
@@ -158,11 +153,9 @@ var extend = {
             if(finishedFilename){
               jsonfile.readFile(finishedFilename, function(err,finishedItems){
                 if(err){
-                  cb(err)
+                  cb(err);
                 }
                 else {
-
-
                   finishedItems.push(item[0]);
 
                   jsonfile.writeFile(finishedFilename, finishedItems, function(err,m){
@@ -204,7 +197,6 @@ var extend = {
             }
         });
       }
-
     })
   },
 

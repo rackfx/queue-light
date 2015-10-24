@@ -93,41 +93,49 @@ var extend = {
     var id=item.id;
     console.log(item.id);
     jsonfile.readFile(filename, function(err, obj) {
-
-      //TODO error check!
-      obj.forEach(function(queueItem, i){
-        if(obj[i].id == id){
-          obj[i].readyState = true;
-          jsonfile.writeFile(filename, obj,function(err){
-              if(err){
-                cb(err);
-              }
-              else {
-                cb(null, obj[i]);
-              }
-          });
-        }
-      })
+      if(err){
+        cb(err);
+      }
+      else {
+        obj.forEach(function(queueItem, i){
+          if(obj[i].id == id){
+            obj[i].readyState = true;
+            jsonfile.writeFile(filename, obj,function(err){
+                if(err){
+                  cb(err);
+                }
+                else {
+                  cb(null, obj[i]);
+                }
+            });
+          }
+        })
+      }
     });
   },
   update: function(item, cb){  // update item properties.  This will pull properties from {item} and update the existing item in the json file.
     var filename = this.filename;
     var id = item.id;
     jsonfile.readFile(filename,function(err,obj){
-      //TODO: error check!
-      obj.forEach(function(queueItem, i){
-        if(obj[i].id = id){
-          obj[i].data = item.data
-          jsonfile.writeFile(filename, obj,function(err){
-              if(err){
-                cb(err);
-              }
-              else {
-                cb(null, obj[i]);
-              }
-          });
-        }
-      });
+      if(err){
+        cb(err);
+      }
+      else {
+        obj.forEach(function(queueItem, i){
+          if(obj[i].id = id){
+            obj[i].data = item.data
+            jsonfile.writeFile(filename, obj,function(err){
+                if(err){
+                  cb(err);
+                }
+                else {
+                  cb(null, obj[i]);
+                }
+            });
+          }
+        });
+      }
+
     });
   },
   finish: function(item,cb){ // Removes the data message from the queue

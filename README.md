@@ -1,4 +1,4 @@
-# queue-light (beta)
+# queue-light
 Lighweight file based JSON queuing service.
 
 ### Usage:

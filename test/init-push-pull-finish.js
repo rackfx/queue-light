@@ -4,6 +4,7 @@ var testQueueFile = './test/testqueue.json';
 var testQueueFinishFile = './test/testqueue.finished.json';
 var jsonfile = require('jsonfile');
 var fs = require('fs');
+var colors = require('colors')
 
 var queue = ql.init(
   {
@@ -14,6 +15,8 @@ var queue = ql.init(
 
 
 describe('queue init',function(){
+
+
   it('should create empty queue files.', function(done){
     jsonfile.readFile(testQueueFile, function(err, obj) {
         assert.deepEqual(obj, []);
@@ -47,8 +50,7 @@ describe('queue init',function(){
                                     assert.deepEqual([], obj);
                                     jsonfile.readFile(testQueueFinishFile, function(err, obj) {
                                       assert.deepEqual(insertData, obj[0].data)
-                                      fs.unlink(testQueueFile);
-                                      fs.unlink(testQueueFinishFile);
+
                                       done();
                                     });
                                   });
@@ -68,3 +70,12 @@ describe('queue init',function(){
     });
   });
 });
+
+cleanUpOnExit = function(){
+  console.log('removing temp queue files'.blue);
+  fs.unlink(testQueueFile);
+  fs.unlink(testQueueFinishFile);
+}
+process.on('exit', cleanUpOnExit);
+process.on('SIGINT', cleanUpOnExit);
+process.on('uncaughtException', cleanUpOnExit);

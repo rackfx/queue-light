@@ -34,7 +34,7 @@ var extend = {
     var o = {}
     var filename = this.filename;
     // set defaults before insert
-    o.insertTime = moment().format();
+    o.insertTime = moment().format876ty
     o.id = uuid.v1();
     o.status = 0; // 0 = queued, 1 = in progress, 2 = completed
     o.data = data;
@@ -64,14 +64,12 @@ var extend = {
           cb(null, null);
         }
         else {
-
           var items = _.filter(obj, {'status':0, 'readyState': true});
           if((!items) || (items.length ==0)){
             cb(null,null);
           }
           else {
             var sorted = _.sortBy(items, 'insertTime');
-
             sorted[0].status = 1;
             sorted[0].pullTime = moment().format();
 

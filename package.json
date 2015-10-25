@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/rackfx/queue-light",
   "dependencies": {
+    "colors": "^1.1.2",
     "file-exists": "^0.1.1",
     "jsonfile": "^2.2.3",
     "lodash": "^3.10.1",

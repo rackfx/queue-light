@@ -1,3 +1,4 @@
+![](https://api.travis-ci.org/rackfx/queue-light.svg?branch=master)
 # queue-light
 Lighweight file based JSON queuing service.
 

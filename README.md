@@ -1,4 +1,4 @@
-![](https://api.travis-ci.org/rackfx/queue-light.svg?branch=master)
+![](https://api.travis-ci.org/rackfx/queue-light.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/rackfx/queue-light/badge.svg?branch=master&service=github)](https://coveralls.io/github/rackfx/queue-light?branch=master)
 # queue-light
 Lighweight file based JSON queuing service.
 

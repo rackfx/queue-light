@@ -89,7 +89,7 @@ var extend = {
   setReady: function(item,cb){
     var filename = this.filename;
     var id=item.id;
-    console.log(item.id);
+
     jsonfile.readFile(filename, function(err, obj) {
       if(err){
         cb(err);
@@ -192,8 +192,11 @@ var extend = {
         cb(err);
       }
       else {
-        var index = _.findIndex(obj, {'id':item.id});
-        obj[index].status = 0;
+        //var index = _.findIndex(obj, {'id':item.id});
+        obj.forEach(function(e,index){
+          obj[index].status = 0;
+        })
+
         jsonfile.writeFile(filename, obj,function(err){
             if(err){
               cb(err);

@@ -187,6 +187,7 @@ var extend = {
   },
   return: function(cb){ // Put's a data message back into the queue and mark it "in queue"
     var filename = this.filename;
+    var found = false;
     jsonfile.readFile(filename, function(err, obj) {
       if(err){
         cb(err);
@@ -194,7 +195,10 @@ var extend = {
       else {
         //var index = _.findIndex(obj, {'id':item.id});
         obj.forEach(function(e,index){
-          obj[index].status = 0;
+          if(obj[index].status > 0) {
+            obj[index].status = 0;
+            found = true;
+          }
         })
 
         jsonfile.writeFile(filename, obj,function(err){
@@ -202,7 +206,7 @@ var extend = {
               cb(err);
             }
             else {
-              cb(null, obj);
+              cb(null, found);
             }
         });
       }

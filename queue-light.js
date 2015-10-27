@@ -185,7 +185,7 @@ var extend = {
 
     });
   },
-  return: function(item,cb){ // Put's a data message back into the queue and mark it "in queue"
+  return: function(cb){ // Put's a data message back into the queue and mark it "in queue"
     var filename = this.filename;
     jsonfile.readFile(filename, function(err, obj) {
       if(err){

@@ -34,7 +34,7 @@ var extend = {
     var o = {}
     var filename = this.filename;
     // set defaults before insert
-    o.insertTime = moment().format876ty
+    o.insertTime = moment().format();
     o.id = uuid.v1();
     o.status = 0; // 0 = queued, 1 = in progress, 2 = completed
     o.data = data;
@@ -185,7 +185,7 @@ var extend = {
 
     });
   },
-  return: function(cb){ // Put's a data message back into the queue and mark it "in queue"
+  return: function(cb){ // Put's all data messages back into the queue and mark it "in queue"
     var filename = this.filename;
     var found = false;
     jsonfile.readFile(filename, function(err, obj) {
@@ -212,6 +212,35 @@ var extend = {
       }
     })
   },
+  backline: function(cb){  // take any items in progress and put it in the back of the line.
+    var filename = this.filename;
+    var found = false;
+    jsonfile.readFile(filename, function(err, obj) {
+      if(err){
+        cb(err);
+      }
+      else {
+        //var index = _.findIndex(obj, {'id':item.id});
+        obj.forEach(function(e,index){
+          if(obj[index].status = 0) {
+            obj[index].status = 0;
+            obj[index].insertTime = moment().format();
+            found = true;
+          }
+        })
+
+        jsonfile.writeFile(filename, obj,function(err){
+            if(err){
+              cb(err);
+            }
+            else {
+              cb(null, found);
+            }
+        });
+      }
+    })
+
+  }
 
 
 }

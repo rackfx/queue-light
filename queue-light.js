@@ -240,8 +240,19 @@ var extend = {
       }
     })
 
+  },
+  count: function(cb){
+    var filename = this.filename;
+    var found = false;
+    jsonfile.readFile(filename, function(err, obj) {
+      if(err){
+        cb(err);
+      }
+      else {
+        cb(null, obj.length);
+      }
+    });
   }
-
 
 }
 

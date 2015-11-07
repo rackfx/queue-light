@@ -1,6 +1,9 @@
-![](https://api.travis-ci.org/rackfx/queue-light.svg?branch=master) 
+![](https://api.travis-ci.org/rackfx/queue-light.svg?branch=master)
 # queue-light
-Lighweight file based JSON queuing service.
+# note: This does not scale
+## While using this module for storage is useful, I was not able to use it at scale.  Many file writes collide and mess up the JSON files pretty badly.  If your file writes are all sequential, you'll probably be fine.  But I wouldn't use this in a production environment.  At some point, I may work on this further, but, for now, it's up to the community.  Forks and pull requests strongly encouraged...
+
+### Light weight file based JSON queuing service.
 
 ### Usage:
 

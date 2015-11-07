@@ -32,6 +32,7 @@ var extend = {
           var sqlSelect = "SELECT * FROM `"+db_queue_tablename+"` WHERE `id` = ? LIMIT 1";
           db.get(sqlSelect, [lastId], function(err, item){
             if(err) return cb(err);
+            item.data=JSON.parse(item.data);
             cb(null, item);
           })
         });
@@ -39,19 +40,76 @@ var extend = {
     });
   },
   pull : function(cb){
-    var sql = "SELECT * FROM `"+db_queue_tablename+"` WHERE `ready` = 1 ORDER BY insertTime LIMIT 1";
+    var sql = "SELECT * FROM `"+db_queue_tablename+"` WHERE `ready` = 1 AND `status` = 0 ORDER BY insertTime LIMIT 1";
     db.serialize(function(){
       db.get(sql, [], function(err, item){
         if(err) return cb(err);
-        cb(null, item)
+        item.timesRun++;
+        item.pullTime = moment().format();
+        var sqlUpdate = "UPDATE `"+db_queue_tablename+"` SET `status` = 1, `timesRun` = ?, `pullTime` = ? WHERE `id` = ?";
+        db.run(sqlUpdate, [item.timesRun, item.pullTime, item.id], function(err){
+          console.log(err);
+          if(err) return cb(err);
+          item.data=JSON.parse(item.data);
+          cb(null, item)
+        })
       });
     })
   },
   setReady : function(item, cb){
-    var sql = "UPDATE `"+db_queue_tablename+"` SET `ready` = ? WHERE id = ?;";
-    db.run(sql,[1, item.id], function(err, rows){
+    var sql = "UPDATE `"+db_queue_tablename+"` SET `ready` = 1 WHERE id = ?;";
+    db.run(sql,[item.id], function(err, rows){
       if(err) return cb(err);
       cb(null)
+    })
+  },
+  update: function(item, cb){
+    var sql = "UPDATE `"+db_queue_tablename+"` SET `data` = ? WHERE id = ?";
+    db.run(sql, [JSON.stringify(item.data), item.id], function(err){
+      console.log(err, item);
+      if(err) return cb(err);
+      cb(null, item);
+    })
+  },
+  finish: function(item, cb){
+    item.finishTime = moment().format();
+    item.status = 2;
+    var sql = "UPDATE `"+db_queue_tablename+"` SET `status` = 2, finishTime = ? WHERE `id` = ?";
+    db.run(sql,[item.finishTime, item.id], function(err){
+      if(err) return cb(err);
+      cb(null, item);
+    })
+  },
+  return: function(cb){
+    var sql = "UPDATE `"+db_queue_tablename+"` SET `status` = 0 WHERE `status` = 1;";
+    db.run(sql, [], function(err){
+      if (err) return cb(err);
+      cb(null)
+    })
+  },
+  backline: function(cb){
+    var sql = "UPDATE `"+db_queue_tablename+"` SET `status` = 0, `insertTime` = ? WHERE `status` = 1;";
+    db.run(sql, [moment().format()], function(err){
+      if (err) return cb(err);
+      cb(null)
+    })
+  },
+  count: function(cb){
+    var counter = {}
+    var sql = "SELECT COUNT(*) FROM `"+db_queue_tablename+"` WHERE `status` = ?;";
+    db.get(sql, [0], function(err, count){
+      if(err)cb(err)
+      counter.queued = count['COUNT(*)'];
+      db.get(sql, [1], function(err, count){
+        if(err)cb(err)
+        counter.inProgress = count['COUNT(*)'];
+        db.get(sql, [2], function(err, count){
+          if(err)cb(err)
+          counter.finished= count['COUNT(*)'];
+          cb(counter);
+          console.log(counter);
+        })
+      });
     })
   }
 

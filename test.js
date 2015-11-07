@@ -9,16 +9,32 @@ var queue = queuelight.init(
 );
 
 
+queue.count(function(err, count){
 
-var data = {name: 'first'}
-queue.push(data, function(err,data2){
-  console.log(data2);
-  queue.setReady(data2, function(err){
-    queue.pull(function(err,data){
-      console.log('-');
-      console.log(data);
-    })
-  });
+})
+
+//
+// var data = {name: 'first'}
+// queue.return(function(err){
+//
+// })
+// queue.push(data, function(err,item){
+//   item.data.name = 'david';
+//   item.data.collr = 'red';
+//   console.log(item);
+//   queue.update(item, function(err,data3){
+//     console.log(err);
+//     queue.setReady(data3, function(err){
+//       queue.pull(function(err,data){
+//         console.log('-');
+//         console.log(item);
+//         queue.finish(data, function(err,item){
+//           console.log(item);
+//         })
+//       })
+//     });
+//   })
+//
 
 
 
@@ -37,7 +53,7 @@ queue.push(data, function(err,data2){
   // })
 
 
-});
+// });
 
 
 // queue.return();

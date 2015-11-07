@@ -1,6 +1,6 @@
 ![](https://api.travis-ci.org/rackfx/queue-light.svg?branch=master)
 # queue-light
-### Note: Version 1.2 is a complete factor and rewrite, and introduces breaking changes to version < 1.2.  
+Note: Version 1.2 is a complete factor and rewrite, and introduces breaking changes to version < 1.2.  This is mostly due to file changes, we're now using sqlite instead of FS for storage.  An effort was made to keep the syntax the same, however.
 ### Light weight file based JSON queuing service using Sqlite database.
 
 ### Usage:

@@ -2,7 +2,7 @@
   "name": "queue-light",
   "version": "1.1.5-2",
   "description": "Lighweight file based JSON queuing service",
-  "main": "queue-light.js",
+  "main": "queue-light-new.js",
   "scripts": {
     "test": "mocha -b"
   },
@@ -29,7 +29,8 @@
     "lockfile": "^1.0.1",
     "lodash": "^3.10.1",
     "moment": "^2.10.6",
-    "node-uuid": "^1.4.3"
+    "node-uuid": "^1.4.3",
+    "sqlite3": "^3.1.1"
   },
   "devDependencies": {
     "coveralls": "^2.11.4",

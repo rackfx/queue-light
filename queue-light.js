@@ -6,6 +6,7 @@ var uuid = require('node-uuid');
 var fs = require('fs');
 var fileExists = require('file-exists');
 
+
 /* exports.init options : {
   finishedFilename: string
   filename : string

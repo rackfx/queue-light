@@ -7,12 +7,13 @@ var db_filename = 'queue.db';
 var db_queue_tablename = "queue";
 
 exports.init = function(o){
+  db_filename = o.filename;
   db = new sqlite3.Database(db_filename);
   db.serialize(function() {
     db.run("CREATE TABLE IF NOT EXISTS queue (id INTEGER PRIMARY KEY AUTOINCREMENT, status INTEGER NOT NULL, data TEXT, firstInsertTime CHAR(255), insertTime CHAR(255), pullTime CHAR(255), finishTime CHAR(255), timesRun INTEGER NOT NULL, finished INTEGER, ready INTEGER );");
   });
   result = extend;
-  result.defaultReadyState = 0;
+  result.defaultReadyState = o.defaultReadyState;
   return result;
 }
 

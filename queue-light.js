@@ -1,264 +1,123 @@
-var jsonfile = require('jsonfile');
-var util = require('util');
-var _ = require('lodash');
 var moment = require('moment');
 var uuid = require('node-uuid');
-var fs = require('fs');
-var fileExists = require('file-exists');
+var sqlite3 = require('sqlite3').verbose();
+var _ = require('lodash');
+var db = {}
+var db_filename = 'queue.db';
+var db_queue_tablename = "queue";
 
-
-/* exports.init options : {
-  finishedFilename: string
-  filename : string
-  defaultReadyState: boolean // Default: true
-}
-*/
-
-exports.init = function(options){
-  var result = extend;
-  result.filename = options.filename;
-  if(!('defaultReadyState' in options)){ // set default
-    options.defaultReadyState = true;
-  }
-  result.defaultReadyState = options.defaultReadyState;
-  if(options.finishedFilename) {
-    result.finishedFilename = options.finishedFilename;
-    createNotExist(options.finishedFilename, '[]'); // create the file if it doesn't exist
-  }
-  createNotExist(options.filename, '[]'); // create the file if it doesn't exist
-  result.queueTimeout = options.queueTimeout;
+exports.init = function(o){
+  db = new sqlite3.Database(db_filename);
+  db.serialize(function() {
+    db.run("CREATE TABLE IF NOT EXISTS queue (id INTEGER PRIMARY KEY AUTOINCREMENT, status INTEGER NOT NULL, data TEXT, firstInsertTime CHAR(255), insertTime CHAR(255), pullTime CHAR(255), finishTime CHAR(255), timesRun INTEGER NOT NULL, finished INTEGER, ready INTEGER );");
+  });
+  result = extend;
+  result.defaultReadyState = 0;
   return result;
 }
 
 var extend = {
-  push: function(data, cb){ // push a new data message into the queue.
-    var o = {}
-    var filename = this.filename;
-    // set defaults before insert
-    o.insertTime = moment().format();
-    o.id = uuid.v1();
-    o.status = 0; // 0 = queued, 1 = in progress, 2 = completed
-    o.data = data;
-    o.readyState = this.defaultReadyState;
-    jsonfile.readFile(filename, function(err, obj) {
-      obj.push(o);
-      jsonfile.writeFile(filename,obj,function(err){
-        if(err){
-          cb(err);
-        }
-        else {
-          cb(null, obj[obj.length - 1]);
-        }
-      })
-    })
+  push : function(item, cb){
+    var that = this;
+    var sql = db.prepare("INSERT INTO `"+db_queue_tablename+"` (`status`,`data`,`insertTime`,`firstInsertTime`, `timesRun`, `finished`, `ready`) VALUES (0,?,?,?,0,0,?);");
+    db.serialize(function() {
+      var time = moment().format();
 
-  },
-  pull: function(cb){ // pull's next data message and marks it in progress
-    var filename = this.filename;
-    jsonfile.readFile(filename, function(err, obj) {
-      if(obj.length===0){
-        cb(null, null);
-      }
-      else{
+      sql.run(JSON.stringify(item), time,time, that.defaultReadyState, function(err, data){
+        if(err) return cb(err);
+        var lastId = this.lastID;
 
-        if ((!obj) || (obj.length == 0)){
-          cb(null, null);
-        }
-        else {
-          var items = _.filter(obj, {'status':0, 'readyState': true});
-          if((!items) || (items.length ==0)){
-            cb(null,null);
-          }
-          else {
-            var sorted = _.sortBy(items, 'insertTime');
-            sorted[0].status = 1;
-            sorted[0].pullTime = moment().format();
-
-            jsonfile.writeFile(filename, sorted,function(err){
-                if(err){
-                  cb(err);
-                }
-                else {
-                  cb(null, sorted[0]);
-                }
-            });
-          }  // end else if for !items || items.length ==0
-        }
-      }
-    })
-  },
-  setReady: function(item,cb){
-    var filename = this.filename;
-    var id=item.id;
-
-    jsonfile.readFile(filename, function(err, obj) {
-      if(err){
-        cb(err);
-      }
-      else {
-        obj.forEach(function(queueItem, i){
-          if(obj[i].id == id){
-            obj[i].readyState = true;
-            jsonfile.writeFile(filename, obj,function(err){
-                if(err){
-                  cb(err);
-                }
-                else {
-                  cb(null, obj[i]);
-                }
-            });
-          }
-        })
-      }
+        sql.finalize(function(){
+          //TODO couldn't get params to go through params, +lastId+ fixes.  Fix sometime.
+          var sqlSelect = "SELECT * FROM `"+db_queue_tablename+"` WHERE `id` = ? LIMIT 1";
+          db.get(sqlSelect, [lastId], function(err, item){
+            if(err) return cb(err);
+            item.data=JSON.parse(item.data);
+            cb(null, item);
+          })
+        });
+      });
     });
   },
-  update: function(item, cb){  // update item properties.  This will pull properties from {item} and update the existing item in the json file.
-    var filename = this.filename;
-    var id = item.id;
-    jsonfile.readFile(filename,function(err,obj){
-      if(err){
-        cb(err);
-      }
-      else {
-        obj.forEach(function(queueItem, i){
-          if(obj[i].id = id){
-            obj[i].data = item.data
-            jsonfile.writeFile(filename, obj,function(err){
-                if(err){
-                  cb(err);
-                }
-                else {
-                  cb(null, obj[i]);
-                }
-            });
-          }
-        });
-      }
+  pull : function(cb){
+    var sql = "SELECT * FROM `"+db_queue_tablename+"` WHERE `ready` = 1 AND `status` = 0 ORDER BY insertTime LIMIT 1";
+    db.serialize(function(){
+      db.get(sql, [], function(err, item){
 
-    });
-  },
-  finish: function(item,cb){ // Removes the data message from the queue
-    var id=item.id;
-    var filename = this.filename;
-    var finishedFilename = "";
-    if (this.finishedFilename){
-      finishedFilename = this.finishedFilename;
-    }
-    jsonfile.readFile(filename, function(err, obj) {
-      if(err){
-        cb(err);
-      }
-      else {
-        var item = _.remove(obj, { 'id':id });
-        item[0].finishedTime = moment().format();
-        item[0].status = 2;
-        jsonfile.writeFile(filename, obj, function(err){
-          if(err){
-            cb(err);
-          }
-          else {
-            if(finishedFilename){
-              jsonfile.readFile(finishedFilename, function(err,finishedItems){
-                if(err){
-                  cb(err);
-                }
-                else {
-                  finishedItems.push(item[0]);
-
-                  jsonfile.writeFile(finishedFilename, finishedItems, function(err,m){
-                    if(err){
-                      cb(err);
-                    }
-                    else {
-                      cb(null, item);
-                    }
-                  }) // end json writefile
-                }
-              }) // end json readfile
-            } // end if finishedFilename
-            else{
-                cb(null, item);
-            }
-
-          }
+        if(err) return cb(err);
+        if(!item) return cb(null, null);
+        item.timesRun++;
+        item.pullTime = moment().format();
+        var sqlUpdate = "UPDATE `"+db_queue_tablename+"` SET `status` = 1, `timesRun` = ?, `pullTime` = ? WHERE `id` = ?";
+        db.run(sqlUpdate, [item.timesRun, item.pullTime, item.id], function(err){
+          //console.log(err);
+          if(err) return cb(err);
+          item.data=JSON.parse(item.data);
+          cb(null, item)
         })
-      }
-
-    });
-  },
-  return: function(cb){ // Put's all data messages back into the queue and mark it "in queue"
-    var filename = this.filename;
-    var found = false;
-    jsonfile.readFile(filename, function(err, obj) {
-      if(err){
-        cb(err);
-      }
-      else {
-        //var index = _.findIndex(obj, {'id':item.id});
-        obj.forEach(function(e,index){
-          if(obj[index].status > 0) {
-            obj[index].status = 0;
-            found = true;
-          }
-        })
-
-        jsonfile.writeFile(filename, obj,function(err){
-            if(err){
-              cb(err);
-            }
-            else {
-              cb(null, found);
-            }
-        });
-      }
+      });
     })
   },
-  backline: function(cb){  // take any items in progress and put it in the back of the line.
-    var filename = this.filename;
-    var found = false;
-    jsonfile.readFile(filename, function(err, obj) {
-      if(err){
-        cb(err);
-      }
-      else {
-        //var index = _.findIndex(obj, {'id':item.id});
-        obj.forEach(function(e,index){
-          if(obj[index].status = 0) {
-            obj[index].status = 0;
-            obj[index].insertTime = moment().format();
-            found = true;
-          }
-        })
-
-        jsonfile.writeFile(filename, obj,function(err){
-            if(err){
-              cb(err);
-            }
-            else {
-              cb(null, found);
-            }
-        });
-      }
+  setReady : function(item, cb){
+    var sql = "UPDATE `"+db_queue_tablename+"` SET `ready` = 1 WHERE id = ?;";
+    db.run(sql,[item.id], function(err, rows){
+      if(err) return cb(err);
+      cb(null)
     })
-
+  },
+  update: function(item, cb){
+    var sql = "UPDATE `"+db_queue_tablename+"` SET `data` = ? WHERE id = ?";
+    db.run(sql, [JSON.stringify(item.data), item.id], function(err){
+      //console.log(err, item);
+      if(err) return cb(err);
+      cb(null, item);
+    })
+  },
+  finish: function(item, cb){
+    item.finishTime = moment().format();
+    item.status = 2;
+    var sql = "UPDATE `"+db_queue_tablename+"` SET `status` = 2, finishTime = ? WHERE `id` = ?";
+    db.run(sql,[item.finishTime, item.id], function(err){
+      if(err) return cb(err);
+      cb(null, item);
+    })
+  },
+  return: function(cb){
+    var sql = "UPDATE `"+db_queue_tablename+"` SET `status` = 0 WHERE `status` = 1;";
+    db.run(sql, [], function(err){
+      if (err) return cb(err);
+      cb(null)
+    })
+  },
+  backline: function(cb){
+    var sql = "UPDATE `"+db_queue_tablename+"` SET `status` = 0, `insertTime` = ? WHERE `status` = 1;";
+    db.run(sql, [moment().format()], function(err){
+      if (err) return cb(err);
+      cb(null)
+    })
   },
   count: function(cb){
-    var filename = this.filename;
-    var found = false;
-    jsonfile.readFile(filename, function(err, obj) {
-      if(err){
-        cb(err);
-      }
-      else {
-        cb(null, obj.length);
-      }
-    });
+    var counter = {}
+    var sql = "SELECT COUNT(*) FROM `"+db_queue_tablename+"` WHERE `status` = ?;";
+    db.get(sql, [0], function(err, count){
+      if(err)cb(err)
+      counter.queued = count['COUNT(*)'];
+      db.get(sql, [1], function(err, count){
+        if(err)cb(err)
+        counter.inProgress = count['COUNT(*)'];
+        db.get(sql, [2], function(err, count){
+          if(err)cb(err)
+          counter.finished= count['COUNT(*)'];
+          var sql = "SELECT COUNT(*) FROM `"+db_queue_tablename+"` WHERE `ready` = 1 AND `status` = 0;";
+          db.get(sql, [], function(err, count){
+            if(err)cb(err)
+            counter.queuedAndReady= count['COUNT(*)'];
+            //console.log(counter);
+            cb(null,counter);
+          })
+        })
+      });
+    })
   }
 
-}
-
-function createNotExist(filename, data){
-  if(!fileExists(filename)){
-    fs.writeFileSync(filename, data);
-  }
 }

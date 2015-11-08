@@ -24,16 +24,12 @@
   "homepage": "https://github.com/rackfx/queue-light",
   "dependencies": {
     "colors": "^1.1.2",
-    "file-exists": "^0.1.1",
-    "jsonfile": "^2.2.3",
-    "lockfile": "^1.0.1",
     "lodash": "^3.10.1",
     "moment": "^2.10.6",
     "node-uuid": "^1.4.3",
     "sqlite3": "^3.1.1"
   },
   "devDependencies": {
-    "coveralls": "^2.11.4",
     "mocha": "^2.3.3",
     "mocha-lcov-reporter": "^1.0.0"
   }

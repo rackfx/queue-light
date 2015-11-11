@@ -68,6 +68,20 @@ Remove item from queue.  If finishedFilename is set, the item will be added to t
 
 Return an item back to the queue, marking it "in queue" (0)
 
+
+### more methods:
+setReady(item, cb) - Sets an item as ready, need to make sure that options include defaultReadyState = false
+
+update (item, cb) - Update data on an item.  item data will be replaced with `item` contents
+
+return (cb) - Return all items to the queue
+
+backline (cb) - Return all items to the queue and set insertDate as now.  
+
+count (cb) _ Return the number of items in the queue in an objet 
+
+
+Will write more soon, see here for now: https://github.com/rackfx/queue-light/blob/master/queue-light.js
 ### TODO:
 - move json data to data object
 - drop()

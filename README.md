@@ -70,16 +70,46 @@ Return an item back to the queue, marking it "in queue" (0)
 
 
 ### more methods:
+
+
+
 setReady(item, cb) - Sets an item as ready, need to make sure that options include defaultReadyState = false
+```javascript
+  queue.setReady(item, function(err){
+    //...
+    })
+```
 
 update (item, cb) - Update data on an item.  item data will be replaced with `item` contents
+```javascript
+  queue.update(item, function(err,item){
+    //...
+  })
+```
 
-return (cb) - Return all items to the queue
+#### return (cb) - Return all items to the queue
+```javascript
+  queue.return(function(err){
+    //...
+  })
+```
 
-backline (cb) - Return all items to the queue and set insertDate as now.  
-
-count (cb) _ Return the number of items in the queue in an objet 
-
+#### backline (cb) - Return all items to the queue and set insertDate as now.  
+```javascript
+  queue.backline(function(function(err){
+    //...
+  }))
+```
+#### count (cb) - Return the number of items in the queue in an objet
+```javascript
+  queue.count(function(err,count){
+    //..
+  })
+```
+returns an object:
+```javascript
+[{"queued":1,"inProgress":1,"finished":9,"queuedAndReady":1}]
+```
 
 Will write more soon, see here for now: https://github.com/rackfx/queue-light/blob/master/queue-light.js
 ### TODO:

@@ -111,7 +111,6 @@ returns an object:
 [{"queued":1,"inProgress":1,"finished":9,"queuedAndReady":1}]
 ```
 
-Will write more soon, see here for now: https://github.com/rackfx/queue-light/blob/master/queue-light.js
 ### TODO:
 - move json data to data object
 - drop()

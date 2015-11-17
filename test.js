@@ -1,17 +1,19 @@
-queuelight = require('./queue-light-new.js');
+queuelight = require('./queue-light.js');
 var queue = queuelight.init(
   {
-    filename: './data/queue.json',
-    finishedFilename: './data/queue.finished.json',
+    filename: './queue.db',
+    //finishedFilename: './data/queue.finished.json',
     defaultReadyState: false
   }
 
 );
 
-
-queue.count(function(err, count){
-
+queue.dbGet('SELECT * from queue',[], function(err,items){
+  console.log(items);
 })
+// queue.count(function(err, count){
+//   console.log(count);
+// })
 
 //
 // var data = {name: 'first'}

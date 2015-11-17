@@ -7,6 +7,9 @@ var db_filename = 'queue.db';
 var db_queue_tablename = "queue";
 
 exports.init = function(o){
+
+
+
   db_filename = o.filename;
   db = new sqlite3.Database(db_filename);
   db.serialize(function() {
@@ -119,6 +122,19 @@ var extend = {
         })
       });
     })
+  },
+  dbGet: function(q, p,cb){
+    /*
+      q{
+      Last resort!
+    }
+    */
+    db.get(q, p, function(err,items){
+      console.log(items);
+      if(err) return cb(err)
+      return cb(null, items);
+    })
+
   }
 
 }

@@ -130,7 +130,7 @@ var extend = {
     }
     */
     db.get(q, p, function(err,items){
-      console.log(items);
+      
       if(err) return cb(err)
       return cb(null, items);
     })

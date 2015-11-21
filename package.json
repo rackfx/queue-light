@@ -1,6 +1,6 @@
 {
   "name": "queue-light",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Lighweight file based JSON queuing service",
   "main": "queue-light.js",
   "scripts": {

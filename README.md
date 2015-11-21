@@ -27,12 +27,15 @@ var data = {name: 'first'}
 // Push your data to the json file.
 queue.push(data, function(err,data){
   console.log(data);
-  // Pull oldest from the json file
-  queue.pull(function(err,item){
-    console.log(item);
-    // mark the item as finished, this removes it from the json file
-    queue.finish(item, function(err, item){
+  // Mark the item as "ready"
+  queue.setReady(item,function(err,item){
+    // Pull oldest from the json file
+    queue.pull(function(err,item){
       console.log(item);
+      // mark the item as finished, this removes it from the json file
+      queue.finish(item, function(err, item){
+        console.log(item);
+      });
     });
   });
 });
@@ -54,19 +57,25 @@ Initialize JSON queue file.
 
 #### queue.push(data,cb)
 
-Push new data into the queue, and mark it "in queue" (0).  Returns the entire queue.
+Push new data into the queue, and mark it "in queue" (0).  Returns the entire queue.  CB returns err or item.
+
+#### queue.setReady(item,cb)
+
+Set the item as ready.  CB returns err or item.
 
 #### queue.pull(cb)
 
-Pull the oldest item out of the queue and mark it as "in progress" (1)
+Pull the oldest item out of the queue and mark it as "in progress" (1). CB returns err or item.
 
 #### queue.finish(item,cb)
 
 Remove item from queue.  If finishedFilename is set, the item will be added to the finished items JSON file and marked "Completed" (2)
+CB returns err or item.
 
 #### queue.return(item,cb)
 
 Return an item back to the queue, marking it "in queue" (0)
+
 
 
 ### more methods:

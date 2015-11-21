@@ -2,7 +2,7 @@ var assert=require('assert');
 var ql = require('../queue-light');
 var testQueueFile = './test/testqueue.db';
 //var testQueueFinishFile = './test/testqueue.finished.json';
-var jsonfile = require('jsonfile');
+
 var fs = require('fs');
 var colors = require('colors')
 
